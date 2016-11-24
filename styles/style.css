@@ -1,7 +1,7 @@
-body {background: #d2d2ff url(background.png) center}
+body {background: #a9a9ff url(background.png) center}
 #manifest {font-family:'Ubuntu', sans-serif;border:2px gray solid;border-radius:20px;max-width: 900px;margin: 10px auto;background-color:white;}
 h1, h2 {font-family:'VT323', monospace;font-weight:400;}
-header {display:block;background:linear-gradient(to right, lightblue, blue);padding:20px 50px;color:white;border-radius: 19px 19px 0 0;}
+header {display:block;background:#a9a9ff linear-gradient(to right, rgba(255,255,255,0.25), rgba(0, 0, 0, 0.25));padding:20px 50px;color:white;border-radius: 19px 19px 0 0;}
 body#home header {padding:50px 50px;}
 header > h1 {font-size:45px;}
 header > h1, header > h2 {margin:0px}
