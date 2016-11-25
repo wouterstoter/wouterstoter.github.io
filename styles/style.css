@@ -10,9 +10,9 @@ menu > a {color:white;text-decoration:none;}
 menu > a > menuitem {padding:10px 20px;}
 menu > a:hover > menuitem {background:rgba(0, 0, 0, 0.25);}
 #content {padding:10px;overflow:hidden}
-#portfolio #content > #filter {left: 0; width: 33.33%; display: block; background-color: rgba(128,128,128,0.50); color: white; float: left; padding: 10px; box-sizing: border-box;}
+#portfolio #content > #filter {left: 0; width: 33.33%; display: block; background-color: rgba(128,128,128,0.75); color: white; float: left; padding: 10px; box-sizing: border-box;}
 #portfolio #content > #filter > h3 {margin: 0;}
-#portfolio #content > #filter > hr {border: 1px solid white;margin: 20px 0;}
+#portfolio #content > #filter > hr {border: 1px solid white;margin: 10px 0;}
 input[type="checkbox"] {
   display: none;
 }
