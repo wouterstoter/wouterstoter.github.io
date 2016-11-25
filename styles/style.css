@@ -35,6 +35,5 @@ input[type="checkbox"]:checked + label::before {
 #portfolio #content > #filter input[type="checkbox"]:checked + label::before {background: white;}
 #portfolio #content > #result {
     width: 66.66%;
-    height: 10px;
     float: left;
 }
