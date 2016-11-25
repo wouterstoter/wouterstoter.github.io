@@ -30,3 +30,5 @@ input[type="checkbox"] + label::before {
 input[type="checkbox"]:checked + label::before {
   background: black;
 }
+#portfolio #content > #filter input[type="checkbox"] + label::before {border: 1.5px solid white;}
+#portfolio #content > #filter input[type="checkbox"]:checked + label::before {background: white;}
