@@ -14,6 +14,9 @@
         "thumb": "",
         "images": []
       }]
+      document.body.onhashchange = function() {
+        
+      }
     </script>
   </head>
   <body id="portfolio">
@@ -30,12 +33,17 @@
       </menu>
       <div id="content">
         <div id="filter">
-          <h3>Catagorie</h3>
-          <input type="checkbox" name="catagory" id="site"><label for="site">Site's</label><br>
-          <input type="checkbox" name="catagory" id="logo"><label for="logo">Logo's</label><br>
-          <input type="checkbox" name="catagory" id="video"><label for="video">Video's</label><br>
-          <input type="checkbox" name="catagory" id="fotobewerking"><label for="fotobewerking">Fotobewerking</label><br>
-          <input type="checkbox" name="catagory" id="overig"><label for="overig">Overig</label><br>
+          <h3>Soort</h3>
+          <input type="checkbox" name="kind" id="site"><label for="site">Site's</label><br>
+          <input type="checkbox" name="kind" id="logo"><label for="logo">Logo's</label><br>
+          <input type="checkbox" name="kind" id="video"><label for="video">Video's</label><br>
+          <input type="checkbox" name="kind" id="fotobewerking"><label for="fotobewerking">Fotobewerking</label><br>
+          <input type="checkbox" name="kind" id="overig"><label for="overig">Overig</label><br>
+
+          <h3>Voor</h3>
+          <input type="checkbox" name="for" id="picchio"><label for="picchio">Picchio</label><br>
+          <input type="checkbox" name="for" id="windwheeler"><label for="windwheeler">Windwheeler</label><br>
+          <input type="checkbox" name="for" id="none"><label for="none">Niemand</label><br>
         </div>
         <div id="result">
           
