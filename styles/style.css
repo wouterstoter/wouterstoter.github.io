@@ -9,4 +9,24 @@ menu {margin:0px;background:gray;color:white;padding:0px;line-height:38px;}
 menu > a {color:white;text-decoration:none;}
 menu > a > menuitem {padding:10px 20px;}
 menu > a:hover > menuitem {background:rgba(0, 0, 0, 0.25);}
-#content {padding:10px;}
+#content {padding:10px;overflow:hidden}
+#portfolio #content > #filter {left: 0; width: 33%; display: block; background-color: rgba(128,128,128,0.50); color: white; float: left; padding: 10px; box-sizing: border-box;}
+#portfolio #content > #filter > h3 {margin: 0.25em 0;}
+input[type="checkbox"] {
+  display: none;
+}
+input[type="checkbox"] + label::before {
+  content: '';
+  margin-right: 5px;
+  width: 13px;
+  height: 13px;
+  display: inline-block;
+  vertical-align: middle;
+  border: 1.5px solid black;
+  font-size: 13px;
+  border-radius: 15%;
+  box-sizing: border-box;
+}
+input[type="checkbox"]:checked + label::before {
+  background: black;
+}
