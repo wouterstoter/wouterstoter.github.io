@@ -36,4 +36,6 @@ input[type="checkbox"]:checked + label::before {
 #portfolio #content > #result {
     width: 66.66%;
     float: left;
+    padding-left: 10px;
+    box-sizing: border-box;
 }
