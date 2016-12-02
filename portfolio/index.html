@@ -20,13 +20,16 @@
         "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.",
         "thumb": "",
         "href":"picchio_site"
+      }]
+      document.body.onhashchange = function() {
+        var props = {}
+        for (i = 0; i < document.location.hash.slice(1).split('&').length; ++i) {
+          props[document.location.hash.slice(1).split('&')[i].split('=')[0]] = document.location.hash.slice(1).split('&')[i].split('=')[1];
+        }
       }
     </script>
   </head>
   <body id="portfolio">
-      }]
-      document.body.onhashchange = function() {
-        
     <div id="manifest">
       <header>
         <h1>Portfolio</h1>
