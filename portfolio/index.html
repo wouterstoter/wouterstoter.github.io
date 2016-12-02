@@ -26,6 +26,9 @@
         for (i = 0; i < document.location.hash.slice(1).split('&').length; ++i) {
           props[document.location.hash.slice(1).split('&')[i].split('=')[0]] = document.location.hash.slice(1).split('&')[i].split('=')[1];
         }
+        if (props.kind != undefined) {
+          var filtered = portitems.filter(function() {})
+        }
       }
     </script>
   </head>
@@ -47,7 +50,7 @@
           <input type="checkbox" name="kind" id="site"><label for="site">Site</label><br>
           <input type="checkbox" name="kind" id="logo"><label for="logo">Logo</label><br>
           <input type="checkbox" name="kind" id="video"><label for="video">Video</label><br>
-          <input type="checkbox" name="kind" id="fotobewerking"><label for="afbeelding">Afbeelding</label><br>
+          <input type="checkbox" name="kind" id="afbeelding"><label for="afbeelding">Afbeelding</label><br>
           <input type="checkbox" name="kind" id="overig"><label for="overig">Overig</label><br>
           <hr>
           <h3>Voor</h3>
@@ -61,16 +64,17 @@
                 for (c = 0; c < document.querySelectorAll('#filter > input[type="checkbox"][name="kind"]:checked').length; ++c) {
                   if (c == 0) {hash += "kind="}
                   hash += document.querySelectorAll('#filter > input[type="checkbox"][name="kind"]:checked')[c].id
-                  if (c - 1 == document.querySelectorAll('#filter > input[type="checkbox"][name="kind"]:checked').length) {
+                  if (c + 1 == document.querySelectorAll('#filter > input[type="checkbox"][name="kind"]:checked').length) {
                     hash += '&';
                   } else {hash += ','}
                 }
 
                 for (c = 0; c < document.querySelectorAll('#filter > input[type="checkbox"][name="for"]:checked').length; ++c) {
-                  if (c == 0) {hash += "kind="}
+                  if (c == 0) {hash += "for="}
                   hash += document.querySelectorAll('#filter > input[type="checkbox"][name="for"]:checked')[c].id
-                  if (c - 1 != document.querySelectorAll('#filter > input[type="checkbox"][name="for"]:checked').length) {hash += ','}
+                  if (c + 1 != document.querySelectorAll('#filter > input[type="checkbox"][name="for"]:checked').length) {hash += ','}
                 }
+                document.location.hash = hash;
               }
             }
           </script>
