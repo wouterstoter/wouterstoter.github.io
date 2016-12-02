@@ -11,22 +11,22 @@
         "for": "Picchio",
         "kind": "logo",
         "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna."
-        "thumb": "",
+        "thumb": "picchio_logo/card-image.png",
         "href":"picchio_logo"
       },{
         "title": "Picchio Site",
         "for": "Picchio",
         "kind": "site",
-        "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna."
+        "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.",
         "thumb": "",
         "href":"picchio_site"
-      }]
-      document.body.onhashchange = function() {
-        
       }
     </script>
   </head>
   <body id="portfolio">
+      }]
+      document.body.onhashchange = function() {
+        
     <div id="manifest">
       <header>
         <h1>Portfolio</h1>
@@ -51,6 +51,26 @@
           <input type="checkbox" name="for" id="picchio"><label for="picchio">Picchio</label><br>
           <input type="checkbox" name="for" id="windwheeler"><label for="windwheeler">Windwheeler</label><br>
           <input type="checkbox" name="for" id="none"><label for="none">Niemand</label><br>
+          <script>
+            for (i = 0; i < document.querySelectorAll('#filter > input[type="checkbox"]').length; ++i) {
+              document.querySelectorAll('#filter > input[type="checkbox"]')[i].onchange = function() {
+                var hash = "#"
+                for (c = 0; c < document.querySelectorAll('#filter > input[type="checkbox"][name="kind"]:checked').length; ++c) {
+                  if (c == 0) {hash += "kind="}
+                  hash += document.querySelectorAll('#filter > input[type="checkbox"][name="kind"]:checked')[c].id
+                  if (c - 1 == document.querySelectorAll('#filter > input[type="checkbox"][name="kind"]:checked').length) {
+                    hash += '&';
+                  } else {hash += ','}
+                }
+
+                for (c = 0; c < document.querySelectorAll('#filter > input[type="checkbox"][name="for"]:checked').length; ++c) {
+                  if (c == 0) {hash += "kind="}
+                  hash += document.querySelectorAll('#filter > input[type="checkbox"][name="for"]:checked')[c].id
+                  if (c - 1 != document.querySelectorAll('#filter > input[type="checkbox"][name="for"]:checked').length) {hash += ','}
+                }
+              }
+            }
+          </script>
         </div>
         <div id="result">
           
