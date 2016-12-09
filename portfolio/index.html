@@ -56,11 +56,11 @@
                 for (prop = 0; prop < props.length; ++prop) {
                   hash.push([]);
                   for (c = 0; c < document.querySelectorAll('#filter > input[type="checkbox"][name="' + props[prop] + '"]:checked').length; ++c) {
-                    hash[hash.length - 1].push(document.querySelectorAll('#filter > input[type="checkbox"][name="kind"]:checked')[c].id)
+                    hash[hash.length - 1].push(document.querySelectorAll('#filter > input[type="checkbox"][name="' + props[prop] + '"]:checked')[c].id)
                   }
                   if (hash[hash.length - 1].length != 0) {
                     hash[hash.length - 1] = props[prop] + "=" + hash[hash.length - 1].join(',')
-                  } else {delete hash[hash.length - 1]}
+                  } else {hash.pop()}
                 }
                 document.location.hash = (hash.length > 0) ? "#" + hash.join('&') : "";
                 
