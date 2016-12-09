@@ -8,14 +8,14 @@
     <script>
       var portitems = [{
         "title": "Picchio Logo",
-        "for": "Picchio",
+        "for": "picchio",
         "kind": "logo",
         "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.",
         "thumb": "picchio_logo/card-image.png",
         "href":"picchio_logo"
       },{
         "title": "Picchio Site",
-        "for": "Picchio",
+        "for": "picchio",
         "kind": "site",
         "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.",
         "thumb": "",
@@ -63,21 +63,6 @@
                   } else {hash.pop()}
                 }
                 document.location.hash = (hash.length > 0) ? "#" + hash.join('&') : "";
-                
-            /*    for (c = 0; c < document.querySelectorAll('#filter > input[type="checkbox"][name="kind"]:checked').length; ++c) {
-                  if (c == 0) {hash += "kind="}
-                  hash += document.querySelectorAll('#filter > input[type="checkbox"][name="kind"]:checked')[c].id
-                  if (c + 1 == document.querySelectorAll('#filter > input[type="checkbox"][name="kind"]:checked').length) {
-                    hash += '&';
-                  } else {hash += ','}
-                }
-
-                for (c = 0; c < document.querySelectorAll('#filter > input[type="checkbox"][name="for"]:checked').length; ++c) {
-                  if (c == 0) {hash += "for="}
-                  hash += document.querySelectorAll('#filter > input[type="checkbox"][name="for"]:checked')[c].id
-                  if (c + 1 != document.querySelectorAll('#filter > input[type="checkbox"][name="for"]:checked').length) {hash += ','}
-                }
-                document.location.hash = hash;*/
               }
             }
           </script>
@@ -98,6 +83,7 @@
             if ((props.kind.indexOf(data.kind) != -1 || typeof props.kind === "undefined") && (props.for.indexOf(data.for) != -1 || typeof props.for === "undefined")) {return}
             
           })
+          console.log(filtered);
         }
       }
     </script>
