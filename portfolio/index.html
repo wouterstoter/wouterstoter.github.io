@@ -21,15 +21,6 @@
         "thumb": "",
         "href":"picchio_site"
       }]
-      document.body.onhashchange = function() {
-        var props = {}
-        for (i = 0; i < document.location.hash.slice(1).split('&').length; ++i) {
-          props[document.location.hash.slice(1).split('&')[i].split('=')[0]] = document.location.hash.slice(1).split('&')[i].split('=')[1];
-        }
-        if (props.kind != undefined) {
-          var filtered = portitems.filter(function() {})
-        }
-      }
     </script>
   </head>
   <body id="portfolio">
@@ -84,5 +75,19 @@
         </div>
       </div>
     </div>
+    <script>
+      document.body.onhashchange = function() {
+        var props = {}
+        for (i = 0; i < document.location.hash.slice(1).split('&').length; ++i) {
+          props[document.location.hash.slice(1).split('&')[i].split('=')[0]] = document.location.hash.slice(1).split('&')[i].split('=')[1].split(',');
+        }
+        if (props.kind != undefined) {
+          var filtered = portitems.filter(function(data) {
+            if ((props.kind.indexOf(data.kind) != -1 || typeof props.kind === "undefined") && (props.for.indexOf(data.for) != -1 || typeof props.for === "undefined")) {return}
+            
+          })
+        }
+      }
+    </script>
   </body>
 </html>
