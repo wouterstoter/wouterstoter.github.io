@@ -36,7 +36,7 @@
       } else {
         video.src = queryStringParameters.src
       }
-      document.body.appendChild(video)
+      document.location.href = "data:text/html;base64," + btoa(video.outerHTML)
     </script>
   </body>
 </html>
