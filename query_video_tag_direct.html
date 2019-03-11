@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Query String Video Player</title>
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1, user-scalable=no">
+  </head>
+  <body>
+    <script>
+      var queryStringParameters = (function () {
+          var match,search = /([^&=]+)=?([^&]*)/g,decode = function (s) { return decodeURIComponent(s.replace(/\+/g, " ")); },urlParams = {};
+          while (match = search.exec(window.location.search.substring(1))) urlParams[decode(match[1])] = decode(match[2]);
+          return urlParams;
+      })();
+      var video = document.createElement('video');
+      video.style.background = 'black';
+      video.style.width = '100%';
+      video.style.height = '100%';
+      video.style.left = '0';
+      video.style.top = '0';
+      video.style.position = 'absolute';
+      video.poster = queryStringParameters.poster || '';
+      video.setAttribute('controls','')
+      if (JSON.parse(queryStringParameters['autoplay'] || 'false')) {video.setAttribute('autoplay','')}
+      if (JSON.parse(queryStringParameters['hls'] || 'false') == true && video.canPlayType('application/x-mpegURL') == "") {
+        var script = document.createElement('script')
+        script.src = 'https://cdn.jsdelivr.net/hls.js/latest/hls.min.js';
+        script.setAttribute('onload','(' + (function() {
+          var vid = document.querySelector('video');
+          if(Hls.isSupported()) {
+            var hls = new Hls();
+            hls.loadSource(queryStringParameters.src);
+            hls.attachMedia(vid);
+         }
+        }).toString() + ')()')
+        document.head.appendChild(script)
+      } else {
+        video.src = queryStringParameters.src
+      }
+      document.body.appendChild(video)
+    </script>
+  </body>
+</html>
