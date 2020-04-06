@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style type="text/css">
+      body {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        margin: 0;
+        box-sizing: border-box;
+        font-family:sans-serif;
+      }
+      #video {
+        height: 100%;
+        max-width: 50%;
+        background-color:black;
+      }
+      pre {
+        width: 100%;
+        border: 1px solid #999;
+        overflow: hidden;
+        white-space: pre-wrap;
+        overflow-y: auto;
+        flex-grow: 1;
+        margin: 0;
+      }
+      pre > span {
+        display: block;
+        padding: 5px;
+        border-bottom: 1px solid lightgray;
+      }
+      .error {
+        color: red;
+      }
+      .warn {
+        color: orange;
+      }
+      .info {
+        color: darkgreen;
+      }
+      body > .top {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: row;
+        position: relative;
+        padding: 10px;
+        height: 50%;
+        box-sizing: border-box;
+      }
+      body > .bottom {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        padding: 10px;
+        height: 50%;
+        box-sizing: border-box;
+      }
+      body > .top > .left {
+        flex-grow:1;
+        margin-right:10px;
+      }
+      #controls {
+        display: flex;
+        flex-direction: row;
+      }
+      #controls > button {
+        flex-grow: 1;
+        flex-shrink: 1;
+        margin: 5px;
+        border: 1px solid gray;
+        border-radius: 5px;
+        font-family: "Material Icons";
+        font-size: 40px;
+        padding: 3% 0;
+      }
+    </style>
+    <title>Simple Screen Recorder</title>
+  </head>
+  <body>
+    <div class="top">
+      <div class="left">
+        <div id="controls">
+          <button id="pick" title="Pick source">phonelink</button>
+          <button id="start" title="Start recording">radio_button_checked</button>
+          <button id="pause" title="Pause recording">pause</button>
+          <button id="stop" title="Stop recording">stop</button>
+          <button id="save_chunck" title="Save last recording chunk">save</button>
+          <button id="save" title="Save full recording" style=" text-shadow: 0px 0px 3px #ffffff, 0px 0px 3px #ffffff, 0px 0px 3px #ffffff, 0px 0px 3px #ffffff, 0px 0px 3px #ffffff, 0px 0px 3px #ffffff, 0px 0px 3px #ffffff, 0px 0px 3px #ffffff, 0px 0px 3px #ffffff, -8px -6px 0px #000000; ">save</button>
+        </div>
+        <div id="options">
+          <input type="checkbox" id="type_video" name="type_video" checked><label for="type_video">Video</label><br>
+          Show cursor: <select id="cursor">
+            <option value="always" default>Always</option>
+            <option value="motion">When in motion</option>
+            <option value="never">Never</option>
+          </select><br>
+          Display surface: <select id="displaySurface">
+            <option value="application">Single application</option>
+            <option value="browser">Single Browser Tab</option>
+            <option value="monitor" default>Full monitor</option>
+            <option value="window">Single window</option>
+          </select><br>
+          Media type: <select id="mimeType">
+            <option default>video/webm</option>
+            <option>video/webm;codecs=vp8</option>
+            <option>video/webm;codecs=vp9</option>
+            <option>video/webm;codecs=vp8.0</option>
+            <option>video/webm;codecs=vp9.0</option>
+            <option>video/webm;codecs=h264</option>
+            <option>video/webm;codecs=H264</option>
+            <option>video/webm;codecs=avc1</option>
+            <option>video/webm;codecs=vp8,opus</option>
+            <option>video/WEBM;codecs=VP8,OPUS</option>
+            <option>video/webm;codecs=vp9,opus</option>
+            <option>video/webm;codecs=vp8,vp9,opus</option>
+            <option>video/webm;codecs=h264,opus</option>
+            <option>video/webm;codecs=h264,vp9,opus</option>
+            <option>video/x-matroska;codecs=avc1</option>
+            <option>audio/webm</option>
+            <option>audio/webm;codecs=opus</option>
+          </select><br>
+          <input type="checkbox" id="logicalSurface" name="logicalSurface"><label for="logicalSurface">The video contained in the stream's video track contains a background rendering context, rather than a user-visible one</label><br>
+          <br>
+          <input type="checkbox" id="type_audio" name="type_audio" checked><label for="type_audio">Audio</label><br>
+        </div>
+      </div>
+      <video id="video" controls class="right"></video>
+    </div>
+    <div class="bottom">
+      <strong>Log:</strong>
+      <pre id="log"></pre>
+    </div>
+    <script>
+      const logElem = document.getElementById("log");
+      console.log = msg => logElem.innerHTML += '<span>' + msg + '</span>';
+      console.error = msg => logElem.innerHTML += '<span class="error">' + msg + '</span>';
+      console.warn = msg => logElem.innerHTML += '<span class="warn">' + msg + '<span>';
+      console.info = msg => logElem.innerHTML += '<span class="info">' + msg + '</span>'; 
+      
+      const videoElem = document.getElementById("video");
+      
+      for (i = 0; i < document.querySelectorAll("select#mimeType > option"); ++i) {
+        var option = document.querySelectorAll("select#mimeType > option")[i]
+        if (!MediaRecorder.isTypeSupported(option.innerText)) {
+          document.querySelectorAll("select#mimeType").removeChild(option);
+        }
+      }
+      
+      var mr = {};
+      var full = true;
+      mr.init = async function initMR() {
+        try {
+          mr.init = this.init;
+          mr.stream = await navigator.mediaDevices.getDisplayMedia({
+            video: (document.querySelector("input#type_video").checked ? {
+              "cursor": document.querySelector("select#cursor").value,
+              "displaySurface": document.querySelector("select#displaySurface").value,
+              "logicalSurface": document.querySelector("input#logicalSurface").checked
+            } : false),
+            audio: true
+          });
+          videoElem.srcObject = mr.stream;
+          videoElem.play();
+          videoElem.muted = true;
+          videoElem.srcObject.getTracks().forEach(videoTrack => {
+            console.info("Track settings: " + JSON.stringify(videoTrack.getSettings(), null, 2))
+            console.info("Track constraints: " + JSON.stringify(videoTrack.getConstraints(), null, 2));
+          })
+          
+          mr.recorder = new MediaRecorder(mr.stream, {
+            video: (document.querySelector("input#type_video").checked ? {
+              "cursor": document.querySelector("select#cursor").value,
+              "displaySurface": document.querySelector("select#displaySurface").value,
+              "logicalSurface": document.querySelector("input#logicalSurface").checked,
+              "height":720,
+              "aspect-ratio":16/9
+            } : false),
+            audio: document.querySelector("input#type_video").checked
+          });
+          mr.recorder.onstart = e => console.log("recorder started: " + JSON.stringify(e))
+          mr.recorder.onpause = e => console.log("recorder paused: " + JSON.stringify(e))
+          mr.recorder.onresume = e => console.log("recorder resumed: " + JSON.stringify(e))
+          mr.recorder.onstop = e => console.log("recorder stopped: " + JSON.stringify(e))
+          mr.recorder.onerror = e => console.error("recorder error: " + JSON.stringify(e))
+          mr.start = function() {
+            if (mr.recorder.state == "inactive") {
+              mr.recordedChunks = [];
+              mr.recorder.start();
+              videoElem.srcObject = mr.stream;
+              videoElem.play();
+              videoElem.muted = true;
+            } else if (mr.recorder.state == "paused") {
+              mr.recorder.resume();
+              videoElem.play();
+            } else {
+              console.error("could not start recording");
+            }
+          };
+          mr.pause = function() {
+            if (mr.recorder.state == "recording") {
+              mr.recorder.pause();
+              videoElem.pause();
+            } else {
+              console.error("could not pause recording");
+            }
+          };
+          mr.stop = function() {
+            full = true;
+            if (mr.recorder.state == "recording") {
+              mr.recorder.stop();
+            } else {
+              console.error("could not stop recording");
+            }
+          };
+          mr.save = function(forceSafe) {
+            if (mr.recorder.state == "recording" && !forceSafe) {
+              mr.recorder.requestData();
+            } else {
+              if (full) {
+                var blob = new Blob(mr.recordedChunks, {
+                  type: mr.recorder.mimeType
+                });
+              } else {
+                var blob = mr.recordedChunks.slice(-1)[0];
+              }
+              var url = URL.createObjectURL(blob);
+              if ((mr.recorder.state == "recording" && forceSafe) || !forceSafe) {
+                var link = document.createElement("a");
+                link.download = name;
+                link.href = url;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                delete link;
+                console.log((full ? "full " : "") + "recording saved");
+              } else {
+                videoElem.srcObject = null;
+                videoElem.src = url;
+                videoElem.muted = false;
+              }
+            }
+          };
+          mr.recorder.ondataavailable = function(event) {
+            if (event.data.size > 0) {
+              mr.recordedChunks.push(event.data);
+              mr.save(true);
+            }
+          };
+        } catch(err) {
+          console.error("Error: " + err);
+        }
+      };
+
+
+      document.getElementById("pick").addEventListener("click", mr.init);
+      
+      document.getElementById("start").addEventListener("click", async function() {
+        if (mr.start) {
+          mr.start();
+        } else {
+          await mr.init();
+          mr.start();
+        }
+      }, false);
+      
+      document.getElementById("pause").addEventListener("click", function() {
+        mr.pause();
+      })
+      
+      document.getElementById("stop").addEventListener("click", function() {
+        mr.stop();
+      })
+      
+      document.getElementById("save_chunck").addEventListener("click", function() {
+        full = false;
+        mr.save();
+      })
+      
+      document.getElementById("save").addEventListener("click", function() {
+        full = true;
+        mr.save();
+      })
+    </script>
+    <noscript>
+      var mr = {};
+      mr.init = function initMR() {
+        mr = {};
+        mr.init = this.init;
+        var elements = document.querySelectorAll("video,audio,canvas");
+        var e;
+        if (elements.length < 1) {
+          throw alert("No supported elements found")
+        } else if (elements.length > 1) {
+          var identifiers = [...elements].map(a => a.nodeName.toLowerCase() + (a.id ? "#" + a.id : "") + (a.classList.length ? "." + a.classList.value.split(" ").join(".") : ""));
+          var pick = prompt("Which element do you want to capture?\n\n" + identifiers.map((a,i) => i + ": " + a).join("\n"));
+          if (identifiers.indexOf(pick) != -1) {
+            e = elements[identifiers.indexOf(pick)];
+          } else if (elements[Number(pick)]) {
+            e = elements[Number(pick)];
+          }
+        }
+        e = e || elements[0];
+        mr.recorder = new MediaRecorder(e.srcObject || e.captureStream(30), {mimeType: "video/webm"});
+        mr.start = function() {
+          if (mr.recorder.state == "inactive") {
+            mr.recordedChunks = [];
+            mr.recorder.start();
+            console.log("recording started");
+          } else if (mr.recorder.state == "paused") {
+            mr.recorder.resume();
+            console.log("recording resumed");
+          } else {
+            console.error("could not start recording");
+          }
+        };
+        mr.pause = function() {
+          if (mr.recorder.state == "recording") {
+            mr.recorder.pause();
+            console.log("recording paused");
+          } else {
+            console.error("could not pause recording");
+          }
+        };
+        mr.stop = function() {
+          if (mr.recorder.state == "recording") {
+            mr.recorder.stop();
+            console.log("recording stopped");
+          } else {
+            console.error("could not stop recording");
+          }
+        };
+        mr.save = function(forceSafe) {
+          if (mr.recorder.state == "recording" && !forceSafe) {
+            mr.recorder.requestData();
+          } else {
+            var blob = new Blob(mr.recordedChunks, {
+              type: mr.recorder.mimeType
+            });
+            var url = URL.createObjectURL(blob);
+            console.log(url);
+            var link = document.createElement("a");
+            link.download = name;
+            link.href = url;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            delete link;
+          }
+        };
+        mr.recorder.ondataavailable = function(event) {
+          if (event.data.size > 0) {
+            mr.recordedChunks.push(event.data);
+            mr.save(true);
+          }
+        };
+      };
+      if (!mr.recorder) {mr.init()}
+      mr.start();
+    </noscript>
+  </body>
+</html>
