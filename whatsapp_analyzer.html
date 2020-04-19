@@ -228,7 +228,8 @@
               text.split("\n").forEach(function(m) {
                 var message = {};
                 message.file = e.target.fileNumber;
-                var date = new Date(m.split(" - ")[0]);
+                //var date = new Date(m.split(" - ")[0]);
+                var Date = moment(m.split(" - ")[0],"MM/DD/YY, hh:mm").toDate()
                 if (isNaN(date)) date = moment(m.split(" - ")[0],"DD-MM-YY hh:mm").toDate()
                 if (!/[a-zA-Z]/.test(m.split(" - ")[0]) && !isNaN(date)) {
                   message.date = date;
