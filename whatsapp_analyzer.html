@@ -1,6 +1,7 @@
 <html>
   <head>
     <title>WhatsApp analyzer</title>
+    <script src="https://momentjs.com/downloads/moment.min.js"></script>
     <style>
       body {
         font-family: "Segoe UI", "Helvetica Neue", Helvetica, "Lucida Grande", Arial, Ubuntu, Cantarell, "Fira Sans", sans-serif;
@@ -228,7 +229,8 @@
                 var message = {};
                 message.file = e.target.fileNumber;
                 var date = new Date(m.split(" - ")[0]);
-                if (!isNaN(date)) {
+                if (isNaN(date)) date = moment(m.split(" - ")[0],"DD-MM-YY HH:MM").toDate()
+                if (!/[a-zA-Z]/.test(m.split(" - ")[0]) && !isNaN(date)) {
                   message.date = date;
                   m = m.split(" - ").slice(1).join(" - ")
                 } else {
