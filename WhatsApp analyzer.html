@@ -1,0 +1,280 @@
+<html>
+  <head>
+    <title>WhatsApp analyzer</title>
+    <style>
+      body {
+        font-family: "Segoe UI", "Helvetica Neue", Helvetica, "Lucida Grande", Arial, Ubuntu, Cantarell, "Fira Sans", sans-serif;
+      }
+      #options {
+        position: absolute;
+        display: block;
+        width: 40%;
+        background: white;
+        top: 0;
+        left: 0;
+        height: 100%;
+        overflow-y: auto;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+      #content {
+        position: absolute;
+        display: block;
+        width: 60%;
+        top: 0;
+        right: 0;
+        height: 100%;
+        overflow-y: auto;
+        background: rgb(229, 221, 213);
+      }
+      #content::before {
+        content:"";
+        background-image:url(https://web.whatsapp.com/img/bg-chat-tile_9e8a2898faedb7db9bf5638405cf81ae.png);
+        position: absolute;
+        top: 0;
+        width: 100%;
+        opacity: 0.06;
+        min-height: 100%;
+      }
+      #content.empty:not(.drop)::after {
+        content:"Click to open file";
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        left:0;
+        text-align: center;
+        color: black;
+        font-size: 30px;
+        padding: 20px;
+        box-sizing: border-box;
+        cursor:pointer;
+      }
+      #content.drop::after {
+        content:"Drop file to open";
+        background-color:#009688ad;
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        opacity: 0.5;
+        left:0;
+        text-align: center;
+        color: white;
+        font-size: 30px;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+      #uploadfield {
+        height:200px;
+        border: 1px dashed black;
+        cursor:pointer;
+      }
+      .messageView > div {
+        background: white;
+        display: inline-block;
+        margin: 5px 20px;
+        font-size: 14.2px;
+        padding: 6px 7px 8px 9px;
+        box-shadow: rgba(0, 0, 0, 0.13) 0px 1px 0.5px 0px;
+        border-radius: 7.5px;
+        position: relative;
+      }
+      .messageView > div > span.author {
+        font-weight:bold;
+        display:block;
+      }
+      .messageView > div > span.time {
+        font-size: 11px;
+        float: right;
+        color: gray;
+        margin: 5px 0 -5px 20px;
+      }
+      .messageView > div.info {
+        background: rgba(255, 245, 196, 0.95);
+        font-size: 12.5px;
+        padding: 5px 12px 6px 12px;
+        color: rgba(0, 0, 0, 0.96);
+      }
+      .messageView > div.same {
+        margin-top:-3;
+      }
+      .messageView > div.date {
+        background-color:rgba(225, 245, 254, 0.92);
+        font-size: 12.5px;
+        padding: 5px 12px 6px 12px;
+        color: rgba(0, 0, 0, 0.96);
+      }
+      .messageView > div.message {
+        border-radius: 0 7px 7px 7px;
+      }
+      .messageView > div.message::before {
+        content: "";
+        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAmCAMAAADp2asXAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAClUExURUxpcTU1NcrKyoyMjA4ODgAAAAwMDAAAAAAAANjY2Dc3N7a2tmBgYDg4OMvLywAAALm5ubi4uGRkZMrKymdnZ4yMjM3NzdnZ2b6+vrOzs7Ozs4GBgQAAALy8vImJiQ8PDwAAAGpqasnJyTExMVpaWg8PD8XFxdLS0jQ0NLKystbW1lpaWoaGhszMzM7Ozs/Pz9TU1NDQ0NfX19jY2NPT09HR0dnZ2Si/rzgAAAAtdFJOUwAw6pUSAxQBAv0zwVo26AXFxl7lY5HMfOi+mHYJz40RDAzjLlcQ0Psxv/xBiUTl04kAAACNSURBVCjP7cu5FoIwGEThUcE/ccV9FxV3jQmgvv+jUUE1qWy95XxngLL9bGqqXqbaZfkxFHbzlMN64wGscg8E0ZsDunVLQTDW/CH9Rk4BaA4cB7R6lgOGmoOEk4w/ELQdB9RGloKgo/lD1DajAMQLxwHJIaUgON4tfUA9vxxwul044Hr2gHr4IMS/3ysApV8k8vjzIswAAAAASUVORK5CYII=);
+        display:block;
+        width: 12px;
+        height: 9px;
+        background-size: cover;
+        position: absolute;
+        left: -12px;
+        top: 0;
+        filter: brightness(100);
+      }
+      .voteView > div {
+        background: white;
+        display: inline-block;
+        margin: 5px 20px;
+        font-size: 14.2px;
+        padding: 6px 7px 8px 9px;
+        box-shadow: rgba(0, 0, 0, 0.13) 0px 1px 0.5px 0px;
+        border-radius: 7.5px;
+        position: relative;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="options">
+      <h1>WhatsApp analyzer</h1>
+      <label>Type: </label> <select id="type" onchange="messageReader()">
+        <option value="messages">Messages</option>
+        <option value="votes">Votes</option>
+        <option value="stats">Statistics</option>
+      </select><br/>
+      <label>Start: </label><input type="datetime-local" id="start" name="start" onchange="messageReader()"><br/>
+      <label>End: </label><input type="datetime-local" id="end" name="end" onchange="messageReader()"><br/>
+    </div>
+    <div id="content" class="empty">
+    </div>
+    <script>
+      var files = [];
+      var messages = [];
+      var people = [];
+      function messageReader() {
+        document.getElementById("content").className = "";
+        document.getElementById("content").innerHTML = "";
+        if (document.getElementById("start").value) var start = new Date(document.getElementById("start").value);
+        if (document.getElementById("end").value) var end = new Date(document.getElementById("end").value);
+        var cm = messages.filter(a => (!start || a.date > start) && (!end || a.date < end)).sort((a,b) => a.date - b.date);
+        if (files.length == 0) {
+          document.getElementById("content").classList.add("empty");
+        } else if (document.querySelector("select#type").value == "messages") {
+          document.getElementById("content").classList.add("messageView");
+          for (i = 0; i < cm.length; ++i) {
+            var div = document.createElement("div");
+            if (!cm[i].author) div.classList.add("info")
+            if (cm[i].author && cm[i-1] && cm[i-1].author && cm[i].author == cm[i-1].author && cm[i].date - cm[i-1].date <= 300000) div.classList.add("same");
+            if (div.classList.length == 0) div.classList.add("message")
+            if (!cm[i-1] || cm[i-1].date.toLocaleDateString() != cm[i].date.toLocaleDateString()) {
+              var date = document.createElement("div");
+              date.innerText = cm[i].date.toLocaleDateString();
+              date.classList.add("date")
+              document.getElementById("content").appendChild(date);
+              document.getElementById("content").appendChild(document.createElement("br"));
+            }
+            if (cm[i].author && !div.classList.contains("same")) {
+              var author = document.createElement("span");
+              author.innerText = cm[i].author;
+              author.classList.add("author");
+              author.style.color = people.filter(a => a.name == cm[i].author)[0].color;
+              div.appendChild(author);
+            }
+            var content = document.createElement("span");
+            content.innerText = cm[i].text;
+            content.innerHTML = content.innerHTML.replace(/\*(.*?)\*/gm,"<b>$1</b>")
+            content.innerHTML = content.innerHTML.replace(/_(.*?)_/gm,"<i>$1</i>")
+            content.innerHTML = content.innerHTML.replace(/(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s^<^>]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s^<^>]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s^<^>]{2,}|www\.[a-zA-Z0-9]+\.[^\s^<^>]{2,})/gm,'<a href="$1" target="_blank">$1</a>')
+            div.appendChild(content);
+            if (cm[i].author) {
+              var time = document.createElement("span");
+              time.innerText = cm[i].date.toLocaleTimeString([],{hour: '2-digit', minute:'2-digit'});
+              time.classList.add("time");
+              div.appendChild(time);
+            }
+            document.getElementById("content").appendChild(div);
+            document.getElementById("content").appendChild(document.createElement("br"));
+          }
+        } else if (document.querySelector("select#type").value == "votes") {
+          document.getElementById("content").classList.add("voteView");
+          var prefix = "!vote ";
+          var results = {};
+          cm = cm.filter(a => a.text.startsWith(prefix));
+          people.forEach(a => results[a.name] = [])
+          for (i = 0; i < cm.length; ++i) {
+            results[cm[i].author].push(cm[i].text.slice(prefix.length));
+          }
+          people.sort((a,b) => a.name > b.name ? 1 : -1).forEach(p => {
+            document.getElementById("content").innerHTML += "<span style='font-size:0'>*</span><b style='color:" + p.color + "'>" + p.name + "</b><span style='font-size:0'>*</span>" + ": "
+            for (i = 0; i < results[p.name].length; ++i) {
+              var last = results[p.name].length - 1 == i
+              if (!last) document.getElementById("content").innerHTML += "<span style='font-size:0'>~</span><s>"
+              document.getElementById("content").innerHTML += results[p.name][i]
+              if (!last) document.getElementById("content").innerHTML += "</s><span style='font-size:0'>~</span> "
+            }
+            document.getElementById("content").innerHTML += "<br/>"
+          })
+          document.getElementById("content").innerHTML = "<div>" + document.getElementById("content").innerHTML + "</div>"
+        }
+      }
+      function fileHandler(e) {
+        if (e) {
+          files = Array.prototype.slice.call(e.target.files || e.dataTransfer.files);
+          messages = [];
+          files.forEach(function(file,fileNumber) {
+            var reader = new FileReader();
+            reader.fileNumber = fileNumber;
+            reader.onload = function(e) {
+              var text = e.target.result;
+              text.split("\n").forEach(function(m) {
+                var message = {};
+                message.file = e.target.fileNumber;
+                var date = new Date(m.split(" - ")[0]);
+                if (!isNaN(date)) {
+                  message.date = date;
+                  m = m.split(" - ").slice(1).join(" - ")
+                } else {
+                  messages[messages.length - 1].text += "\n" + m;
+                  return
+                }
+                if (m.indexOf(": ") != -1) {
+                  message.author = m.split(": ")[0]
+                  if (people.filter(a => a.name == message.author).length == 0) {
+                    people.push({
+                      name: message.author,
+                      color: "hsla(" + Math.floor(Math.random()*356) + ", 100%, 75%, 1)"
+                    })
+                  }
+                  m = m.split(": ")[1];
+                }
+                message.text = m;
+                if (messages.filter(a => a.date == message.date && a.text == message.text && a.author == message.author).length == 0) {
+                  messages.push(message);
+                }
+              })
+              if (e.target.fileNumber == files.length - 1) {
+                messageReader();
+              }
+            }
+            reader.readAsText(file);
+          })
+          e.preventDefault();
+          e.stopPropagation();
+          this.classList.remove("drop");
+        }
+      }
+      document.getElementById("content").ondragenter = function(e) {this.classList.add("drop");e.preventDefault();}
+      document.getElementById("content").ondragleave = function(e) {this.classList.remove("drop");e.preventDefault();}
+      document.getElementById("content").ondragover = function(e) {e.preventDefault();}
+      document.getElementById("content").ondrop = fileHandler;
+      document.getElementById("content").onclick = function() {
+        if (this.classList.contains("empty")) {
+          var input = document.createElement("input");
+          input.setAttribute("type", "file");
+          input.setAttribute("accept", ".txt,text/plain");
+          input.setAttribute("multiple","");
+          input.onchange = fileHandler;
+          input.click();
+        }
+      }
+    </script>
+  </body>
+</html>
