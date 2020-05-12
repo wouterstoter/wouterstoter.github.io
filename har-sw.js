@@ -27,7 +27,7 @@ self.onfetch = function(event) {console.log(event.request);
             
             var headers = new Headers();
             for (h = 0; h < entry.response.headers.length; ++h) {
-                headers.append(entry.response.headers[h].name,entry.response.headers[h].value)
+                if (entry.response.headers[h].name.toLowerCase() != "x-frame-options") headers.append(entry.response.headers[h].name,entry.response.headers[h].value)
             }
             var response;
             if (entry.response.content.encoding == "base64") {
