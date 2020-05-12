@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HAR viewer</title>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('sw.js',{scope: '/'}).then(function(registration) {
+            // Registration was successful
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          }, function(err) {
+            // registration failed :(
+            console.log('ServiceWorker registration failed: ', err);
+          });
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <iframe></iframe>
+    <input type="file" accept=".har"></input>
+    <script>
+      document.querySelector("input").onchange = function() {
+        var file = document.querySelector('input[type="file"]').files[0];
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          var content = JSON.parse(reader.result).log;
+          navigator.serviceWorker.ready.then(registration => {
+            navigator.serviceWorker.controller.postMessage(content);
+          });
+          var page = content.pages.sort((a,b)=>a.startedDateTime < b.startedDateTime ? 1 : -1)[0];
+          console.log(page)
+          /*var entry;
+          for (e = 0; e < content.entries.length; ++e) {
+            entry = content.entries[e];
+            if (entry.pageref == page.id && entry["_resourceType"] == "document" && entry.response && entry.response.content && entry.response.content.text) {break;}
+          }
+          console.log(entry);
+          var blob = new Blob([entry.response.content.text], {type: entry.response.content.mimeType});
+          document.querySelector("iframe").src = URL.createObjectURL(blob);*/
+          var url = new URL(page.title);
+          url.host = document.location.host;
+          url.protocol = document.location.protocol;
+          document.querySelector("iframe").src = url.href;
+        };
+        // Read in the image file as a data URL.
+        reader.readAsText(file);
+      }
+    </script>
+  </body>
+</html>
