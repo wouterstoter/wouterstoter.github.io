@@ -11,6 +11,10 @@ self.addEventListener('install', function(event) {
   event.waitUntil(self.skipWaiting());
 });
 
+self.addEventListener('activate', function(event) {
+    event.waitUntil(self.clients.claim()); // Become available to all pages
+});
+
 self.onfetch = function(event) {console.log(event.request);
     try {
         if (dont.indexOf(event.request.url) == -1 && event.request.destination != "document" && har) {
