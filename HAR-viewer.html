@@ -22,9 +22,18 @@
         });
       }
     </script>
+    <style>
+      iframe {
+        position:absolute;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+      }
+    </style>
   </head>
   <body>
-    <iframe></iframe>
+    <iframe style="display:none;"></iframe>
     <input type="file" accept=".har"></input>
     <script>
       document.querySelector("input").onchange = function() {
@@ -47,6 +56,7 @@
           url.host = document.location.host;
           url.protocol = document.location.protocol;
           document.querySelector("iframe").src = url.href;
+          document.querySelector("iframe").style.display = "";
         };
         // Read in the image file as a data URL.
         reader.readAsText(file);
