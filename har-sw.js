@@ -15,8 +15,9 @@ self.onfetch = function(event) {console.log(event.request);
     try {
         if (dont.indexOf(event.request.url) == -1 && har) {
             var entry;
+            var url = event.request.url.replace(location.origin,base.origin);
             for (e = 0; e < har.entries.length; ++e) {
-                if ((event.request.url == har.entries[e].request.url || event.request.url.replace(base.origin,location.origin) == har.entries[e].request.url) && har.entries[e].response && har.entries[e].response.content && har.entries[e].response.content.text) {entry = har.entries[e];break;}
+                if (har.entries[e].request.url == url && har.entries[e].response && har.entries[e].response.content && har.entries[e].response.content.text) {entry = har.entries[e];break;}
             }
             if (!entry) throw "Error";
             
