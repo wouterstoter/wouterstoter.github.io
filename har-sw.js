@@ -1,4 +1,4 @@
-var dont = ["https://wouterstoter.github.io/HAR-viewer/","https://wouterstoter.github.io/HAR-viewer/sw.js"]
+var dont = ["https://wouterstoter.github.io/HAR-viewer.html","https://wouterstoter.github.io/har-sw.js"]
 
 var har;
 var base;
@@ -8,12 +8,12 @@ self.addEventListener('message', e => {
 });
 
 self.addEventListener('install', function(event) {
-  
+  event.waitUntil(self.skipWaiting());
 });
 
 self.onfetch = function(event) {console.log(event.request);
     try {
-        if (dont.indexOf(event.request.url) == -1 && har) {
+        if (dont.indexOf(event.request.url) == -1 && event.request.destination != "document" && har) {
             var entry;
             var url = event.request.url.replace(location.origin,base.origin);
             for (e = 0; e < har.entries.length; ++e) {
