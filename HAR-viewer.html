@@ -25,9 +25,7 @@
         var reader = new FileReader();
         reader.onload = function(e) {
           var content = JSON.parse(reader.result).log;
-          navigator.serviceWorker.ready.then(registration => {
-            navigator.serviceWorker.controller.postMessage(content);
-          });
+          navigator.serviceWorker.controller.postMessage(content);
           var page = content.pages.sort((a,b)=>a.startedDateTime < b.startedDateTime ? 1 : -1)[0];
           console.log(page)
           /*var entry;
