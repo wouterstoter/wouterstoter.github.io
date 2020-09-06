@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Simple Speech Recognition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
   <body>
     <div id="result">
@@ -34,7 +35,6 @@
           });
       });
       recognition.onresult = function(e) {
-        console.log("onresult", e);
         document.querySelector("#result").innerHTML = "";
         for (i = 0; i < e.results.length; ++i) {
           var p = document.createElement("p");
