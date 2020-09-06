@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Speech Recognition</title>
+  </head>
+  <body>
+    <div id="result">
+    </div>
+    <script>
+      var sr = window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition;
+      if (!sr) {
+        throw document.querySelector("#result").innerText = "Browser not supported";
+      }
+      var recognition = new sr();
+      recognition.continuous = true;
+      recognition.lang = 'en-US';
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 5;
+      
+      [
+       'onaudiostart',
+       'onaudioend',
+       'onend',
+       'onerror',
+       'onnomatch',
+       'onresult',
+       'onsoundstart',
+       'onsoundend',
+       'onspeechend',
+       'onstart'
+      ].forEach(function(eventName) {
+          recognition[eventName] = function(e) {
+              console.log(eventName, e);
+          };
+      });
+      recognition.onresult = function(e) {
+        console.log("onresult", e);
+        document.querySelector("#result").innerHTML = "";
+        for (i = 0; i < e.results.length; ++i) {
+          var p = document.createElement("p");
+          p.innerText = e.results[i][0].transcript;
+          p.style.opacity = e.results[i][0].confidence;
+          document.querySelector("#result").appendChild(p);
+        }
+      }
+      recognition.start();
+    </script>
+  </body>
+</html>
