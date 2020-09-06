@@ -18,20 +18,20 @@
       recognition.maxAlternatives = 5;
       
       [
-       'onaudiostart',
-       'onaudioend',
-       'onend',
-       'onerror',
-       'onnomatch',
-       'onresult',
-       'onsoundstart',
-       'onsoundend',
-       'onspeechend',
-       'onstart'
+       'audiostart',
+       'audioend',
+       'end',
+       'error',
+       'nomatch',
+       'result',
+       'soundstart',
+       'soundend',
+       'speechend',
+       'start'
       ].forEach(function(eventName) {
-          recognition[eventName] = function(e) {
+          recognition.addEventListener(eventName, function(e) {
               console.log(eventName, e);
-          };
+          });
       });
       recognition.onresult = function(e) {
         console.log("onresult", e);
