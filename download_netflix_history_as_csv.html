@@ -132,7 +132,7 @@ $(document).ready(function () {
 
 <div id="step-1" class="section level2">
 <h2>Step 1: Add to bookmark</h2>
-<p>Please add the link below to your bookmarks. You can either do that by dragging it to your bookmark-bar, or by right clicking it, and pressing "Bookmark this link"</p>
+<p>Please add the link below to your bookmarks. You can either do that by dragging it to your bookmark-bar, or by right clicking it, and pressing "Bookmark this link". If you don't see your bookmark-bar, please press Ctrl/Cmd+Shift+B.</p>
 <p><a onclick="alert('Don\'t click the link, but add it to your bookmarks')" href='javascript:var data=[[]];function loadPage(e){fetch("https://www.netflix.com/api/shakti/vdeb953cf/viewingactivity?pg="+e).then(e=>e.json()).then(t=>{for(i=0;i<t.viewedItems.length;++i){var a=data.length;for(property in data[a]=[],t.viewedItems[i]){var n=data[0].indexOf(property);-1==n&&(n=data[0].length,data[0][n]=property),data[a][n]=t.viewedItems[i][property]}}if(data.length<=t.vhSize&&t.viewedItems.length>=20)loadPage(e+1);else{var o=document.createElement("a"),r=data.map(e=>e.map(e=>"string"==typeof e?"\""+e.replace(/"/g,"\"\"")+"\"":e).join(",")).join("\n");console.log(r),o.href=URL.createObjectURL(new Blob([r],{type:"text/csv"})),console.log(o.href),o.target="_blank",o.download="viewingActivity.csv",o.click(),URL.revokeObjectURL(o.href)}})}loadPage(0);'>Save Netflix History</a></p>
 </div>
 <div id="step-2" class="section level2">
