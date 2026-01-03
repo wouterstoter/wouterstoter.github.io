@@ -16,8 +16,9 @@
             var zip = new JSZip();
             har.log.entries.forEach(e => {
                 var url = new URL(e.request.url,"https://www.example.com/")
-                if (!["https:","http:"].includes(url.protocol)) return
+                if (!["https:","http:","file:"].includes(url.protocol)) return
                 var name = url.hostname + url.pathname
+                if (url.protocol == "file:") name = name[1]+name.slice(3);
                 var data = e.response?.content?.text;
                 if (!data) return
                 zip.file(name,data,{base64: e.response.content.encoding == "base64",date: new Date(e.startedDateTime)})
