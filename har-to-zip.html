@@ -21,15 +21,11 @@
                 if (url.protocol == "file:") name = name[1]+name.slice(3);
                 var data = e.response?.content?.text;
                 if (!data) return
-                if (e.response.content.encoding == "base64") data = base64toUint8(data)
+                if (e.response.content.encoding == "base64") try {data = base64toUint8(data)} catch(e) {console.warn(name,e)}
                 zip.file(name,data,{date: new Date(e.startedDateTime)})
             });
-            var curFile = "";
             zip.generateAsync({type:"blob"}, function updateCallback(metadata) {
-                if (metadata.currentFile != curFile) {
-                    console.log("Saving file: " + metadata.currentFile + " (" + metadata.percent.toFixed(2) + "%)");
-                    curFile = metadata.currentFile;
-                }
+                document.body.innerText = metadata.percent.toFixed(2) + "% " + (metadata.currentFile || "");
             }).then(blob => URL.createObjectURL(blob)).then(blobUrl => {
                 var link = document.createElement("a");
                 link.href = blobUrl;
