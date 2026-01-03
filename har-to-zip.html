@@ -21,7 +21,8 @@
                 if (url.protocol == "file:") name = name[1]+name.slice(3);
                 var data = e.response?.content?.text;
                 if (!data) return
-                zip.file(name,data,{base64: e.response.content.encoding == "base64",date: new Date(e.startedDateTime)})
+                if (e.response.content.encoding == "base64") data = base64toUint8(data)
+                zip.file(name,data,{date: new Date(e.startedDateTime)})
             });
             var curFile = "";
             zip.generateAsync({type:"blob"}, function updateCallback(metadata) {
@@ -30,7 +31,7 @@
                     curFile = metadata.currentFile;
                 }
             }).then(blob => URL.createObjectURL(blob)).then(blobUrl => {
-                var link = document.createElement("a"); // Or maybe get it from the current document
+                var link = document.createElement("a");
                 link.href = blobUrl;
                 link.download = file.name.replace(/\.har$/,"") + ".zip";
                 link.innerText = "Click here to download the file";
@@ -40,8 +41,16 @@
                 URL.revokeObjectURL(blobUrl);
             });
         };
-        // Read in the image file as a data URL.
         reader.readAsText(file);
+      }
+      function base64toUint8(data) {
+          data = atob(data)
+          var n = data.length;
+          var response = new Uint8Array(n);
+          while(n--){
+              response[n] = encoded.charCodeAt(n);
+          }
+          return response
       }
     </script>
   </body>
