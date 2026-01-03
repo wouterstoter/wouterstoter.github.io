@@ -28,7 +28,7 @@
                     console.log("Saving file: " + metadata.currentFile + " (" + metadata.percent.toFixed(2) + "%)");
                     curFile = metadata.currentFile;
                 }
-            }).then(blob => URL.createObjectURL(myBlob)).then(blobUrl => {
+            }).then(blob => URL.createObjectURL(blob)).then(blobUrl => {
                 var link = document.createElement("a"); // Or maybe get it from the current document
                 link.href = blobUrl;
                 link.download = file.name.replace(/\.har$/,"") + ".zip";
@@ -36,7 +36,7 @@
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                URL.revokeObjectURL(url);
+                URL.revokeObjectURL(blobUrl);
             });
         };
         // Read in the image file as a data URL.
