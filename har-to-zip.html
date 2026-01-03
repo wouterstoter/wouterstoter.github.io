@@ -3,17 +3,41 @@
   <head>
     <title>HAR to ZIP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" crossorigin="anonymous" integrity="b5d02b3f0bf3ae026451909419df07bb" type="text/javascript"></script>
   </head>
   <body>
-    <iframe style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;border:none;background:white;"></iframe>
-    <input type="file" accept=".har" style="display:none;"></input>
+    <input type="file" accept=".har"></input>
     <script>
       document.querySelector("input").onchange = function() {
         var file = document.querySelector('input[type="file"]').files[0];
         var reader = new FileReader();
         reader.onload = function(e) {
           var har = JSON.parse(reader.result);
-          console.log(har)
+            var zip = new JSZip();
+            har.log.entries.forEach(e => {
+                var url = new URL(e.request.url,"https://www.example.com/")
+                if (!["https:","http:"].includes(url.protocol)) return
+                var name = url.hostname + url.pathname
+                var data = e.response?.content?.text;
+                if (!data) return
+                zip.file(name,data,{base64: e.response.content.encoding == "base64",date: new Date(e.startedDateTime)})
+            });
+            var curFile = "";
+            zip.generateAsync({type:"blob"}, function updateCallback(metadata) {
+                if (metadata.currentFile != curFile) {
+                    console.log("Saving file: " + metadata.currentFile + " (" + metadata.percent.toFixed(2) + "%)");
+                    curFile = metadata.currentFile;
+                }
+            }).then(blob => URL.createObjectURL(myBlob)).then(blobUrl => {
+                var link = document.createElement("a"); // Or maybe get it from the current document
+                link.href = blobUrl;
+                link.download = file.name.replace(/\.har$/,"") + ".zip";
+                link.innerText = "Click here to download the file";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            });
         };
         // Read in the image file as a data URL.
         reader.readAsText(file);
